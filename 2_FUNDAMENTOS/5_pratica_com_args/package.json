@@ -1,0 +1,15 @@
+{
+  "name": "4_modulos_externos",
+  "version": "1.0.0",
+  "description": "estudo sobre npm",
+  "license": "ISC",
+  "author": "matheus",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "minimist": "^1.2.8"
+  }
+}
