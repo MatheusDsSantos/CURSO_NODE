@@ -12,70 +12,75 @@ const chalk = require('chalk').default
 const fs = require('fs')
 
 // Mensagem simples avisando que o programa comecou.
-console.log('iniciamos o accounts')
+console.log('iniciamos o accounts (versao async/await)')
 
 // Chama a funcao principal que mostra o menu logo que o programa roda.
 operation()
 
 // Funcao principal: exibe o menu de acoes para o usuario.
-function operation(){
+// 'async' marca a funcao para podermos usar 'await' dentro dela.
+async function operation(){
 
-    // inquirer.prompt recebe uma lista de perguntas e retorna uma Promise com as respostas.
-    inquirer.prompt([{
-        type: 'select',          // tipo "select" = lista de opcoes para escolher
-        name: 'action',          // nome do campo; sera a chave da resposta (answer.action)
-        message: 'o que voce deseja fazer',  // texto mostrado ao usuario
-        choices: [               // as opcoes disponiveis no menu
-            'criar conta',
-            'consultar saldo',
-            'depositar',
-            'sacar',
-            'sair'
-    ]
-    }]).then((answer) =>{        // .then roda quando o usuario responde
+    // Em vez de .then(), usamos 'await': o codigo PARA aqui ate o usuario responder,
+    // e a resposta cai direto em 'answer'. Mais parecido com codigo "de cima pra baixo".
+    // Envolvemos em try/catch porque sem o .catch() precisamos tratar erros assim.
+    try {
+        const answer = await inquirer.prompt([{
+            type: 'select',          // tipo "select" = lista de opcoes para escolher
+            name: 'action',          // nome do campo; sera a chave da resposta (answer.action)
+            message: 'o que voce deseja fazer',  // texto mostrado ao usuario
+            choices: [               // as opcoes disponiveis no menu
+                'criar conta',
+                'consultar saldo',
+                'depositar',
+                'sacar',
+                'sair'
+            ]
+        }])
+
         const action = answer['action']  // pega a opcao escolhida
         console.log(action)              // mostra no terminal (util para debug)
 
         // Decide qual funcao chamar de acordo com a escolha do usuario.
+        // Usamos 'await' para esperar cada acao terminar antes de seguir.
         if(action === 'criar conta'){
-            createAccount();
+            await createAccount();
         }else if(action === 'depositar'){
-            deposit();
+            await deposit();
         }else if(action === 'consultar saldo'){
-
             //balance = saldo
-            getAccountBalance();
+            await getAccountBalance();
         }else if(action === 'sacar'){
-           withDraw()
+            await withDraw();
         }else if(action === 'sair'){
             console.log(chalk.bgBlue.black('obrigado por usar o account'));
             process.exit()          // encerra o programa
         }
-    })
-       .catch((err) => console.log(err))  // se der erro na pergunta, mostra no terminal
+    } catch (err) {
+        console.log(err)  // se der erro na pergunta, mostra no terminal
+    }
 }
 
 
 
 // create an account
 // Funcao que inicia a criacao de uma conta: mostra as boas-vindas e chama buildAccount.
-function createAccount(){
+async function createAccount(){
     console.log(chalk.bgGreen.black('Parabéns por escolher o nosso banco'))
     console.log(chalk.green('defina as opçoes da sua conta a seguir'))
-    buildAccount();
-
+    await buildAccount();
 }
 
 // Funcao que de fato pergunta o nome e cria o arquivo da conta.
-function buildAccount(){
-
-    // Pergunta o nome da conta.
-    inquirer.prompt([
-        {
-            name: 'accountName',
-            message: 'Digite o nome da sua conta:'
-        }
-    ]).then(answer =>{
+async function buildAccount(){
+    try {
+        // Pergunta o nome da conta (await espera a resposta).
+        const answer = await inquirer.prompt([
+            {
+                name: 'accountName',
+                message: 'Digite o nome da sua conta:'
+            }
+        ])
 
         const accountName = answer['accountName']  // pega o nome digitado
         console.info(accountName)                  // mostra no terminal (debug)
@@ -88,56 +93,56 @@ function buildAccount(){
         // Se ja existe um arquivo com esse nome, avisa e pede o nome de novo.
         if(fs.existsSync(`accounts/${accountName}.json`)){
             console.log(chalk.bgRed.black('esta conta ja existe, escolha outro nome!'))
-            buildAccount();   // recomeca o processo
-            return;           // 'return' impede que o codigo abaixo execute e sobrescreva a conta
+            // 'return await' espera a nova tentativa e impede o codigo abaixo de rodar.
+            return await buildAccount();
         }
 
         // Cria o arquivo JSON da conta com saldo inicial 0.
         fs.writeFileSync(`accounts/${accountName}.json`, '{"balance" : 0}', function(err){console.log(err)})
 
-
         console.log(chalk.green('parabens, sua conta foi criada'))
-    }).catch(err => console.log(err))  // trata erros do prompt
+    } catch (err) {
+        console.log(err)  // trata erros do prompt
+    }
 }
 
 // Funcao responsavel por depositar dinheiro em uma conta.
-function deposit(){
-    // Pergunta em qual conta sera feito o deposito.
-    inquirer.prompt([
-        {
-            name:'accountName',
-            message: 'qual o nome da sua conta?'
-        }
-    ])
-    .then((answer) => {
+async function deposit(){
+    try {
+        // Pergunta em qual conta sera feito o deposito.
+        const answer = await inquirer.prompt([
+            {
+                name:'accountName',
+                message: 'qual o nome da sua conta?'
+            }
+        ])
+
         const accountName = answer['accountName']  // nome da conta informado
 
         //verify account exist
         // Verifica se a conta existe; se nao existir, recomeca o deposito.
         if(!checkAccount(accountName)){
-            return deposit();
+            return await deposit();
         }
 
-
-        // Pergunta o valor que sera depositado.
-        inquirer.prompt([{
+        // Pergunta o valor que sera depositado (await espera a resposta).
+        const answer2 = await inquirer.prompt([{
             name:'amount',
             message:'quanto voce deseja depositar'
-        },
-    ]).then((answer) =>{
-        const amount = answer['amount']  // valor digitado (vem como texto/string)
+        }])
+
+        const amount = answer2['amount']  // valor digitado (vem como texto/string)
 
         //add an amount
         addAmount(accountName, amount);  // soma o valor no saldo da conta
         operation();                     // volta ao menu principal
-
-
-    }).catch(err => console.log(err))  // trata erros da pergunta do valor
-    })
-    .catch(err => console.log(err))    // trata erros da pergunta do nome
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 // Verifica se o arquivo da conta existe. Retorna true (existe) ou false (nao existe).
+// Continua sincrona: nao usa prompt, so checa arquivo, entao nao precisa de async/await.
 function checkAccount(accountName){
     if(!fs.existsSync(`accounts/${accountName}.json`)){
         console.log(chalk.bgRed.black('essa conta nao existe, tente novamente'))
@@ -185,54 +190,57 @@ function getAccount(accountName){
 
 
 //show account balance
-function getAccountBalance(){
-    inquirer.prompt([{
-        name:'accountName',
-        message: 'qual o nome da sua conta?'
-    }]).then((answer)=>{
-        
+async function getAccountBalance(){
+    try {
+        const answer = await inquirer.prompt([{
+            name:'accountName',
+            message: 'qual o nome da sua conta?'
+        }])
+
         const accountName = answer["accountName"]
 
         //verificar se a conta existe
-       if(!checkAccount(accountName)){
-        return getAccountBalance()
-       }
+        if(!checkAccount(accountName)){
+            return await getAccountBalance()
+        }
 
-       //le os dados da conta
-       const accountData = getAccount(accountName)
+        //le os dados da conta
+        const accountData = getAccount(accountName)
 
-       console.log(chalk.bgBlue.black(`Olá, o saldo da sua conta é de R$ ${accountData.balance}`))
+        console.log(chalk.bgBlue.black(`Olá, o saldo da sua conta é de R$ ${accountData.balance}`))
 
-       operation();
-
-    }).catch(err => console.log(err))
+        operation();
+    } catch (err) {
+        console.log(err)
+    }
 }
+
 //withdraw = sacar, funçao pra sacar valor da conta do usuario
-function withDraw(){
-    inquirer.prompt([{
-        name: 'accountName',
-        message:'qual nome da sua conta?'
-    }]).then((answer)=>{
+async function withDraw(){
+    try {
+        const answer = await inquirer.prompt([{
+            name: 'accountName',
+            message:'qual nome da sua conta?'
+        }])
 
         const accountName = answer['accountName']
         if(!checkAccount(accountName)){
-            return withDraw();
+            return await withDraw();
         }
 
-        inquirer.prompt([{
+        const answer2 = await inquirer.prompt([{
             name: 'amount',
             message: 'quanto voce deseja sacar?'
-        }]).then((answer)=>{
+        }])
 
-            const amount = answer['amount']
+        const amount = answer2['amount']
 
-            //retira o valor do saldo da conta
-            removeAmount(accountName, amount)
-            operation()
-        }).catch(err => console.log(err))
-
-
-    }).catch(err => console.log(err))
+        //retira o valor do saldo da conta
+        removeAmount(accountName, amount)
+        operation()
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 // Retira um valor do saldo da conta e salva no arquivo.
