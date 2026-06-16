@@ -33,6 +33,18 @@ connection.connect((err)=>{
 })
 
 
+
+
+
+connection.query('SELECT * FROM books', (err, results)=>{
+    if(err){
+        console.error('Erro ao executar a consulta: ', err);
+        return;
+    }
+
+    console.log('Resultados da consulta: ', results);
+})
+
 app.listen(4000, ()=>{
     console.log('Servidor rodando na porta 4000');
 })
