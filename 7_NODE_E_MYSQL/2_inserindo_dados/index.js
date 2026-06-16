@@ -28,7 +28,7 @@ app.post('/books/insertbook', (req, res) => {
     const title = req.body.title
     const pageqty = req.body.pageqty
 
-    // TODO: faça o INSERT no banco aqui usando connection.query()
+
     const query = `INSERT INTO books (tittle, pageqty) VALUES ('${title}', '${pageqty}')`
     connection.query(query, (err) => {
         if(err){
@@ -42,42 +42,69 @@ app.post('/books/insertbook', (req, res) => {
 // ==================== LISTAR ====================
 
 app.get('/books/list', (req, res) => {
-    // TODO: faça o SELECT no banco aqui e passe os resultados para a view
-    // Exemplo:
-    // connection.query('SELECT * FROM books', (err, results) => {
-    //     res.render('list', { books: results })
-    // })
-    res.render('list');
+
+    connection.query('select * from books', (err, results) =>{
+        if(err){
+            console.error('Erro ao listar livros: ', err);
+            return;
+        }
+        console.log('Resultados da consulta: ', results);
+        res.render('list', { books: results });
+    });
+
+
 });
 
 // ==================== EDITAR ====================
 
-app.get('/books/edit', (req, res) => {
-    // TODO: busque o livro pelo id (req.query.id ou req.params.id) e passe para a view
-    // Exemplo:
-    // const id = req.params.id
-    // connection.query('SELECT * FROM books WHERE id = ?', [id], (err, results) => {
-    //     res.render('edit', { book: results[0] })
-    // })
-    res.render('edit');
+app.get('/books/edit/:id', (req, res) => {
+    const id = req.params.id
+
+    connection.query('SELECT * FROM books WHERE id = ?', [id], (err, results) => {
+        if(err){
+            console.error('Erro ao buscar livro: ', err);
+            return;
+        }
+        res.render('edit', { book: results[0] });
+    });
 });
 
 app.post('/books/updatebook', (req, res) => {
-    // TODO: faça o UPDATE no banco aqui usando os dados do req.body
-    // Exemplo:
+ 
     // const { id, title, pageqty } = req.body
-    // connection.query('UPDATE books SET tittle = ?, pageqty = ? WHERE id = ?', [title, pageqty, id], ...)
+  const id = req.body.id
+  const title = req.body.title
+  const pageqty = req.body.pageqty
+
+  connection.query('update books set tittle = ?, pageqty = ? where id = ?', [title, pageqty, id], (err) => {
+    if(err){
+        console.error('Erro ao atualizar livro: ', err);
+        return;
+    }
+  })
+
+  console.log(`Livro com id ${id} atualizado com sucesso!`);
+  console.log(`Novo título: ${title}, nova quantidade de páginas: ${pageqty}`);
+  console.log('Dados recebidos para atualização:', req.body);
     res.redirect('/books/list');
 });
 
 // ==================== DELETAR ====================
 
 app.post('/books/delete', (req, res) => {
-    // TODO: faça o DELETE no banco aqui usando o id do req.body
-    // Exemplo:
-    // const id = req.body.id
-    // connection.query('DELETE FROM books WHERE id = ?', [id], ...)
-    res.redirect('/books/list');
+    const id = req.body.id;
+    if(!id) {
+        console.error('ID do livro não fornecido para exclusão.');
+        return res.status(400).send('ID do livro é obrigatório para exclusão.');
+    }
+    connection.query('delete from books where id = ?', [id], (err) => {
+        if(err){
+            console.error('Erro ao deletar livro: ', err);
+            return;
+        }
+        console.log(`Livro com id ${id} deletado com sucesso!`);
+        res.redirect('/books/list');
+    });
 });
 
 const connection = mysql.createConnection({

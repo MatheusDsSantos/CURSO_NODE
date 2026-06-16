@@ -1,16 +1,19 @@
 <h1>Lista de Livros</h1>
 <p>Aqui aparecerão todos os livros cadastrados no banco de dados.</p>
 
-<!-- TODO: quando passar { books: results } pela rota, renderize a lista assim:
+
 {{#each books}}
-<div>
-    <span>{{this.tittle}}</span>
-    <span>{{this.pageqty}} páginas</span>
-    <a href="/books/edit/{{this.id}}">Editar</a>
-    <form action="/books/delete" method="POST">
-        <input type="hidden" name="id" value="{{this.id}}">
-        <input type="submit" value="Deletar">
-    </form>
+<div class="book-card">
+    <span class="book-title">{{this.tittle}}</span>
+    <span class="book-pages">{{this.pageqty}} páginas</span>
+    <div class="book-actions">
+        <a class="btn-edit" href="/books/edit/{{this.id}}">Editar</a>
+        <form action="/books/delete" method="POST">
+            <input type="hidden" name="id" value="{{this.id}}">
+            <input class="btn-delete" type="submit" value="Deletar">
+        </form>
+    </div>
 </div>
+{{else}}
+<p class="empty">Nenhum livro cadastrado ainda.</p>
 {{/each}}
--->
