@@ -1,0 +1,20 @@
+<div class="cabecalho">
+    <h1>Nova task</h1>
+</div>
+
+<form action="/tasks/add" method="POST" class="form">
+    <div class="campo">
+        <label for="title">Título</label>
+        <input type="text" name="title" id="title" placeholder="O que precisa ser feito?" required>
+    </div>
+
+    <div class="campo">
+        <label for="description">Descrição</label>
+        <textarea name="description" id="description" rows="4" placeholder="Detalhes da task (opcional)"></textarea>
+    </div>
+
+    <div class="form-acoes">
+        <button type="submit" class="btn">Criar task</button>
+        <a href="/tasks">Cancelar</a>
+    </div>
+</form>

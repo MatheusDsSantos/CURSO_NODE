@@ -1,0 +1,246 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --azul: #2f6feb;
+    --azul-escuro: #1f4fb0;
+    --texto: #1c2333;
+    --texto-fraco: #6b7385;
+    --borda: #e2e5ec;
+    --fundo: #f5f6f9;
+    --verde: #17864b;
+    --verde-fundo: #e4f5eb;
+    --amarelo: #8a5a00;
+    --amarelo-fundo: #fdf3dc;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--fundo);
+    color: var(--texto);
+    line-height: 1.5;
+}
+
+/* ---------- navbar (fica no layout main.handlebars) ---------- */
+
+#navbar {
+    background-color: #fff;
+    border-bottom: 1px solid var(--borda);
+    padding: 0 24px;
+}
+
+#navbar ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 720px;
+    margin: 0 auto;
+    height: 60px;
+}
+
+#navbar .marca {
+    margin-right: auto;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+#navbar a {
+    text-decoration: none;
+    color: var(--texto-fraco);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+#navbar .marca a {
+    color: var(--texto);
+    padding-left: 0;
+}
+
+#navbar a:hover {
+    background-color: var(--fundo);
+    color: var(--texto);
+}
+
+/* ---------- container das paginas ---------- */
+
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+h1 {
+    font-size: 26px;
+}
+
+/* ---------- botoes ---------- */
+
+.btn {
+    display: inline-block;
+    background-color: var(--azul);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: var(--azul-escuro);
+}
+
+/* ---------- lista de tasks (/tasks) ---------- */
+
+.lista-tasks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task {
+    background-color: #fff;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 16px 18px;
+}
+
+.task-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.task-topo h2 {
+    font-size: 17px;
+}
+
+.task-desc {
+    color: var(--texto-fraco);
+    font-size: 15px;
+    margin-top: 6px;
+}
+
+.task-feita h2 {
+    text-decoration: line-through;
+    color: var(--texto-fraco);
+}
+
+.selo {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.selo-feita {
+    background-color: var(--verde-fundo);
+    color: var(--verde);
+}
+
+.selo-pendente {
+    background-color: var(--amarelo-fundo);
+    color: var(--amarelo);
+}
+
+/* ---------- estado vazio ---------- */
+
+.vazio {
+    background-color: #fff;
+    border: 1px dashed var(--borda);
+    border-radius: 8px;
+    padding: 48px 24px;
+    text-align: center;
+}
+
+.vazio p {
+    color: var(--texto-fraco);
+    margin-bottom: 16px;
+}
+
+/* ---------- formulario (/tasks/add) ---------- */
+
+.form {
+    background-color: #fff;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.campo label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.campo input,
+.campo textarea {
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--texto);
+    resize: vertical;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+    outline: none;
+    border-color: var(--azul);
+}
+
+.form-acoes {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.form-acoes a {
+    color: var(--texto-fraco);
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.form-acoes a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- responsivo ---------- */
+
+@media (max-width: 520px) {
+    .cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .task-topo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}

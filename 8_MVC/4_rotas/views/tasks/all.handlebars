@@ -1,0 +1,29 @@
+<div class="cabecalho">
+    <h1>Todas as tasks</h1>
+    <a href="/tasks/add" class="btn">Nova task</a>
+</div>
+
+{{#if tasks.length}}
+    <ul class="lista-tasks">
+        {{#each tasks}}
+            <li class="task {{#if this.done}}task-feita{{/if}}">
+                <div class="task-topo">
+                    <h2>{{this.title}}</h2>
+                    {{#if this.done}}
+                        <span class="selo selo-feita">Concluída</span>
+                    {{else}}
+                        <span class="selo selo-pendente">Pendente</span>
+                    {{/if}}
+                </div>
+                {{#if this.description}}
+                    <p class="task-desc">{{this.description}}</p>
+                {{/if}}
+            </li>
+        {{/each}}
+    </ul>
+{{else}}
+    <div class="vazio">
+        <p>Nenhuma task cadastrada ainda.</p>
+        <a href="/tasks/add" class="btn">Criar a primeira</a>
+    </div>
+{{/if}}
